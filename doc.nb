@@ -1,0 +1,18 @@
+(* Pluma toma los valores de momento angular intermedios,
+las proyecciones de los estados, j y m. Devuelve dos
+valores booleanos que nos dicen si las proyecciones
+son consistentes con el valor de m que se le dió y
+si las proyecciones que se calculan con GeneradorQs
+son válidas con los valores de espín intermedios.*)
+(* Pluma: {Semienteros}, {Semienteros}, Semientero, Semientero
+-> Bool, Bool *)
+
+(*
+México toma los valores de espín intermedios, sus proyecciones,
+proyecciones de los estados, j y m. Devuelve el valor
+del coeficiente de Clebsch-Gordan generalizado.
+*)
+(*
+México: {Semientero},{Semientero},{Semientero},Semientero,Semientero
+-> Número real
+*)
