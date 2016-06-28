@@ -71,7 +71,7 @@ Mexico[k_, q_, M_, j_, m_] := Module[{l = Length[M], prod = 0, i},
    ClebschGordan[{1/2, M[[1]]}, {k[[l - 2]], q[[l - 2]]}, {j, m}]]
 
 Lapiz[K_, M_, j_, m_] := If[Total[M] == m && QVD[K, GeneradorQs[M]],
-  {Mexico[K, GeneradorQs[M], M, j, m], M}, {0, M}]
+  Mexico[K, GeneradorQs[M], M, j, m]*EspinAEstado[M], 0]
 
 Estados[n_]:=Tuples[{1/2,-1/2},{n}]
 
