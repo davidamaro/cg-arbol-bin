@@ -36,6 +36,16 @@ número de qbits.
 Estados: Entero -> {Semienteros}
 Ejemplo: Estados[2]: {1/2,1/2}, {1/2, -1/2}, {-1/2,1/2}, {-1/2, -1/2}
 "
+
+PasoEspinAEstado::usage = "PasoEspinAEstado está pensado para ser
+utilizado únicamente con Map.
+Map le pasa a PasoEspinAEstado cada una de las entradas de una lista
+con 1/2 o -1/2 y la convierte en {1,0} o {0,1} para generar los
+eigenestados de la matriz de Pauli, z.
+Lapiz: Semientero(1/2 o -1/2) -> {0,1} o {1,0}
+"
+EspinAEstado::usage = "Genera el estado utilizando PasoEspinAEstado.
+EspinAEstado: {1/2 o -1/2} -> Estado base computacional."
 Begin["Private`"]
 (*Aquí van las funciones*)
 
@@ -64,5 +74,10 @@ Lapiz[K_, M_, j_, m_] := If[Total[M] == m && QVD[K, GeneradorQs[M]],
   {Mexico[K, GeneradorQs[M], M, j, m], M}, {0, M}]
 
 Estados[n_]:=Tuples[{1/2,-1/2},{n}]
+
+PasoEspinAEstado[estado_] := If[estado == 1/2, {1, 0}, {0, 1}]
+
+EspinAEstado[estados_] := 
+ Flatten[KroneckerProduct @@ Map[PasoEspinAEstado, estados]]
 End[] 
 EndPackage[]
