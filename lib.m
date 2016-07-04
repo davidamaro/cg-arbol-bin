@@ -1,17 +1,31 @@
-BeginPackage["Quantum`"]
+BeginPackage["Acobin`"]
 (*Aquí va la documentación*)
+VerificarIntervalo::usage = "VerificarIntervalo recibe el valor de
+momento angular y dos momentos angulares a sumar y comprueba que el
+valor esté en el intervalo de valores que puede tomar la suma de
+momento angular.
+VerificarIntervalo: Semientero, Semientero, Semientero -> 1 o 0.
+Ejemplo: VerificarIntervalo[1/2, 1/2, 1/2] -> 0."
+IntervaloMA::usage = "IntervaloMA calcula los posibles resultados de
+sumar DOS momentos angulares.
+IntervaloMA: Semientero, Semientero -> {Semienteros}.
+Ejemplo: IntervaloMA[1/2,1] -> {1/2, 3/2}."
+PDG::usage = "PDG verifica que los valores de momento angular interno
+correspondan al valor de momento angular total que se está pensando en
+utilizar.
+PDG:{Semienteros}, Semientero -> Bool.
+Ejemplo: PDG[{0,1}, 1/2] -> False."
 GeneradorQs::usage = "GeneradorQs recibe la lista de proyecciones
- de espín del estado y devuelve los valores
- de proyección intermedios:
- GeneradorQs : {Semienteros} -> {Semienteros}
- Ejemplo : {1/2, 1/2, 1/2} -> {1}."
+de espín del estado y devuelve los valores de proyección intermedios:
+GeneradorQs : {Semienteros} -> {Semienteros}.
+Ejemplo : {1/2, 1/2, 1/2} -> {1}."
 
 RangoAngular::usage = "RangoAngular devuelve los valores de proyección
 para un valor de espín dado.
 RangoAngular: Semientero -> {Semienteros}
 Ejemplo: 1 -> {-1,0,1}"
 
-QVD::usage = " QVD nos dice si los valores de Q son válidos, i.e., 
+QVD::usage = "QVD nos dice si los valores de Q son válidos, i.e., 
 corresponden a valores válidos de la proyección de los
 momentos angulares intermedios.
 QVD: {Semienteros}, {Semienteros} -> Bool
@@ -48,6 +62,8 @@ EspinAEstado::usage = "Genera el estado utilizando PasoEspinAEstado.
 EspinAEstado: {1/2 o -1/2} -> Estado base computacional."
 Begin["Private`"]
 (*Aquí van las funciones*)
+Arriba = SparseArray[{1,0}];
+Abajo = SparseArray[{0,1}];
 
 GeneradorQs[M_] := Module[{l = Length[M], q, i},
   q = {M[[l]] + M[[l - 1]]};
@@ -76,9 +92,19 @@ Lapiz[K_, M_, j_, m_] := If[Total[M] == m && QVD[K, GeneradorQs[M]],
 
 Estados[n_]:=Tuples[{1/2,-1/2},{n}]
 
-PasoEspinAEstado[estado_] := If[estado == 1/2, {1, 0}, {0, 1}]
+PasoEspinAEstado[estado_] := If[estado == 1/2, Arriba, Abajo]
 
 EspinAEstado[estados_] := 
  Flatten[KroneckerProduct @@ Map[PasoEspinAEstado, estados]]
+
+PDG[lista_, j_]:=Module[{segTest=0, l=Length@lista, i, total = 0},
+For[i=1,i<=l-1,i++, 
+total+=VerificarIntervalo[lista[[i+1]],1/2,lista[[i]]]];
+segTest=VerificarIntervalo[j,Last@lista,1/2];
+If[total==l-1&&segTest==1,True,False]
+]
+IntervaloMA[a_, b_] := Table[i, {i, Abs[b - a], a + b}]
+VerificarIntervalo[j_, a_, b_] := 
+ If[MemberQ[IntervaloMA[a, b], j], 1, 0]
 End[] 
 EndPackage[]
